@@ -1,5 +1,8 @@
 import tensorflow as tf
 import numpy as np
+from tensorflow.examples.tutorials.mnist import input_data
+mnist=input_data.read_data_sets('MNIST_data',one_hot=True)
+
 import cv2
 class CNN_number_classifier:
     def weight_variable(self,shape):
@@ -44,29 +47,31 @@ class CNN_number_classifier:
 
         W_fc2 = self.weight_variable([1024, 10])
         b_fc2 = self.bias_variable([10])
-        self.y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+        self.y_conv = tf.nn.sigmoid(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 
         cross_entropy = tf.reduce_mean(-tf.reduce_sum(self.y_ * tf.log(self.y_conv), reduction_indices=[1]))
 
         #self.y_conv = tf.nn.sigmoid(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
         correct_prediction = tf.equal(tf.argmax(self.y_conv, 1), tf.argmax(self.y_, 1))
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-
+        l2_loss=tf.nn.l2_loss(self.y_conv-self.y_)
         #self.mean_sq_err = tf.nn.l2_loss(self.y_conv - self.y_)
         #correct_prediction = tf.equal((tf.sign(self.y_conv - 0.5) + 1) / 2., self.y_)
         # tf.sign()
         #self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        self.train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+        self.train_step = tf.train.AdamOptimizer(1e-4).minimize(l2_loss)
         self.sess= tf.InteractiveSession()
         self.sess.run(tf.initialize_all_variables())
-    def fit(self,X,Y):
-        for i in range(20000):
+    def fit(self,X,Y,n=2000):
+        for i in range(n):
             # batch = mnist.train.next_batch(50)
             batch = np.random.randint(X.shape[0], size=100)
             batch_data = X[batch]
 
-            batch_labels = Y[batch].reshape(-1, 1)
+            batch_labels = Y[batch]#.reshape(-1, 1)
             self.train_step.run(feed_dict={self.x: batch_data, self.y_: batch_labels, self.keep_prob: 0.5})
+            if i%100==0:
+                print i
             '''
             if i % 100 == 0:
                 train_accuracy = accuracy.eval(feed_dict={
@@ -92,3 +97,17 @@ class CNN_number_classifier:
     def save(self, path):
         saver = tf.train.Saver()
         saver.save(self.sess, path)
+
+def train():
+    classifier=CNN_number_classifier()
+    dataX=np.reshape(mnist.train.images,(-1,28,28))
+    while True:
+        c=cv2.waitKey(30)
+        if c==ord('q'):
+            break
+        img=dataX[0]
+        cv2.imshow('img',img)
+    classifier.fit(dataX,mnist.train.labels,1000)
+    classifier.save('MNIST_sess2')
+if __name__=='__main__':
+    train()

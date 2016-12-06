@@ -51,7 +51,7 @@ def create_predict_func(classifier):
 def main():
     path='../../data2/image%d.gif.jpg'
     classifier=CNN_number_classifier.CNN_number_classifier()
-    classifier.restore('MNIST_sess')
+    classifier.restore('MNIST_sess2')
 
     size=(40,60)
     predict=create_predict_func(classifier)
