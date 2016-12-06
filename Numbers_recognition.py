@@ -53,9 +53,9 @@ def main():
     classifier=CNN_number_classifier.CNN_number_classifier()
     classifier.restore('MNIST_sess')
 
-    size=(40,70)
+    size=(40,60)
     predict=create_predict_func(classifier)
-    thresh=0.999
+    thresh=0.9
     number=6
     i=0
     img = cv2.imread(path % i)
@@ -88,7 +88,7 @@ def main():
         #print res
         #bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
             bgr = img.copy()
-            res=sliding_window(predict,gray,3,size)
+            res=sliding_window(predict,gray.astype(np.float32)/255,3,size)
         #delta = time() - st
         #print delta, res
             for item in res:
