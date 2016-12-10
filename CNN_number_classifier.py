@@ -62,7 +62,7 @@ class CNN_number_classifier:
         self.train_step = tf.train.AdamOptimizer(1e-2).minimize(self.l2_loss)
         self.sess= tf.InteractiveSession()
         self.sess.run(tf.initialize_all_variables())
-    def fit(self,X,Y,n=10000):
+    def fit(self,X,Y,n=2000):
         for i in range(n):
             # batch = mnist.train.next_batch(50)
             batch = np.random.randint(X.shape[0], size=50)

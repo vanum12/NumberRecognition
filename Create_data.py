@@ -34,7 +34,7 @@ def create_data(path,img_path,size=(40,60),step=27):
         nums += [int(line_data[17])]
         nums += [int(line_data[18])]
         img=255-cv2.imread(img_path%i)[:,:,0]
-        loc_imgs,loc_labels=create_imgs_and_labels(img,positions,nums,size,step,27)
+        loc_imgs,loc_labels=create_imgs_and_labels(img,positions,nums,size,step)
         imgs+=loc_imgs
         labels+=loc_labels
         pass
@@ -57,7 +57,7 @@ def create_imgs_and_labels(img,positions,nums,size,step,offset=3):
     for x in range(0,img.shape[1]-size[0],step):
         for y in range(0,img.shape[0]-size[1],step):
             imgs+=[img[y:y+size[1],x:x+size[0]]]
-            labels+=[[-1 for i in range(10)]]
+            labels+=[[0 for i in range(10)]]
             for i in range(len(positions)):
 
                 if abs(x+size[0]/2-positions[i][0])<size[0]/2 and abs(y+size[1]/2-positions[i][1])<size[1]/2:

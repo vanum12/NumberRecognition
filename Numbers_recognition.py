@@ -53,13 +53,15 @@ def main():
     path='../../data2/image%d.gif.jpg'
     classifier=CNN_number_classifier.CNN_number_classifier()
     imgs,labels=create_data('pos_and_lab.txt','../../data2/image%d.gif.jpg')
-    #classifier.fit(imgs,labels)
-    #classifier.save('sess2')
-    #classifier.restore('sess2')
+
+
+    classifier.restore('sess2')
+    classifier.fit(imgs,labels)
+    classifier.save('sess2')
 
     size=(40,60)
     predict=create_predict_func(classifier,size)
-    res=classifier.predict(imgs[2])
+    res=classifier.predict(imgs[1])
     thresh=0.8
     number=6
     i=0
