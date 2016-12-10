@@ -4,6 +4,7 @@ import cv2
 import sklearn.cluster
 import CNN_number_classifier
 #from Sliding_window import sliding_window
+from Create_data import create_data
 def dummy(x):
     pass
 
@@ -44,18 +45,22 @@ def sliding_window(predict,img,step,frame_size):
                 #cv2.imwrite('1.jpg', img_to_classify * 255)
             res+=[(prediction,start_x,end_x,start_y,end_y)]
     return res
-def create_predict_func(classifier):
-    func=lambda X:classifier.predict(cv2.resize(X,(28,28)))#[0,number_to_rec]
+def create_predict_func(classifier,size):
+    func=lambda X:classifier.predict(cv2.resize(X,size))#[0,number_to_rec]
     return func
 
 def main():
     path='../../data2/image%d.gif.jpg'
     classifier=CNN_number_classifier.CNN_number_classifier()
-    classifier.restore('MNIST_sess2')
+    imgs,labels=create_data('pos_and_lab.txt','../../data2/image%d.gif.jpg')
+    #classifier.fit(imgs,labels)
+    #classifier.save('sess2')
+    #classifier.restore('sess2')
 
     size=(40,60)
-    predict=create_predict_func(classifier)
-    thresh=0.9
+    predict=create_predict_func(classifier,size)
+    res=classifier.predict(imgs[2])
+    thresh=0.8
     number=6
     i=0
     img = cv2.imread(path % i)
@@ -83,7 +88,7 @@ def main():
         #x_positions=np.sum(gray,0)
 
         #cv2.kmeans(x_positions,6,)
-            gray = cv2.dilate(gray,np.array([[0,1,0],[1,1,1],[0,1,0]],np.uint8))
+            #gray = cv2.dilate(gray,np.array([[0,1,0],[1,1,1],[0,1,0]],np.uint8))
         #res=sklearn.cluster.k_means(extractFeatures2(gray),7,max_iter=1000)
         #print res
         #bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
