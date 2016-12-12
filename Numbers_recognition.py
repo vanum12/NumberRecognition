@@ -52,18 +52,23 @@ def create_predict_func(classifier,size):
 def main():
     path='../../data2/image%d.gif.jpg'
     classifier=CNN_number_classifier.CNN_number_classifier()
-    imgs,labels=create_data('pos_and_lab.txt','../../data2/image%d.gif.jpg')
+    imgs,labels=create_data('pos_and_lab.txt','../../data2/image%d.gif.jpg',(40,60),0)
 
-
-    classifier.restore('sess2')
+    res0=classifier.predict(imgs[1])
+    #classifier.restore('sess2')
     classifier.fit(imgs,labels)
     classifier.save('sess2')
-
+    res1=classifier.predict(imgs[1])
     size=(40,60)
     predict=create_predict_func(classifier,size)
-    res=classifier.predict(imgs[1])
+
+    while True:
+        c=cv2.waitKey(30)
+        if c==ord('q'):
+            break
+        cv2.imshow('img',imgs[1])
     thresh=0.8
-    number=6
+    number=4
     i=0
     img = cv2.imread(path % i)
     bgr=img.copy()
